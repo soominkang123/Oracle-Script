@@ -34,7 +34,8 @@ select eno 사원번호, ename 사원명, job 직책, manager 직속상관,
      hiredate 입사날짜,salary 월급,commission 보너스,dno 부서번호
 from employee; 
 
--- 중복처리후 출력 : distinct 컬럼명 , 컬럼명의 중복을 제거후 출력
+-- 테이블 구조를 확인 하기 , desc 테이블명 ,  실제 컬럼명, null 허용여부, 자료형(number : 정수, 실수 , char, varchar2  : 문자열)
+desc employee;      -- insert 시 컬럼의 자료형, NULL 허용 여부를 확인후  값을 넣음.
 
 select * from employee;
 
