@@ -138,8 +138,84 @@ select * from employee
 where ename like '%LA%';
 
 select*from employee
-where ename like '_CO%'
+where ename like '_CO%';
 
+--NULL 검색 : is null, is not null
+select * from employee;
 
+-- commission 칼럼의 값이 null 인 사용자만 출력 : 보너스가 있는 사원
+select * from employee
+where commission is null;
 
+-- commission 칼럼의 값이 null 인 사용자만 출력 : 보너스가 있는 사원
+select * from employee
+where commission is null;
 
+-- count(): 레코드의 갯수를 출력: 페이징 처리, <==
+  --null은 카운트 하지 않는다.
+
+select count(*) 총레코드수
+from employee;
+
+select count (ename)
+from employee;
+
+select count(commission) --레코드 수 : null 컬럼은 출력 하지 않는다.
+from employee;
+
+select commission 수능점수   --null : 비어있는 상태, 0 점
+from employee;
+
+desc employee;
+
+-- 테이블의 전체 레코드를 정확하게 출력: not null 컬럼을 count(컬럼명), count(*)
+
+-- 특정 컬럼을 정렬해서 출력 : order by 컬럼명 ASC[DESC], select 절에서 제일 마지막에 와야 함.
+ -- ASC : 내림 차순 정렬 : A =====> Z , 가 ===> 하 , 1 ==> 9 
+ -- DESC : 오름 차순 정렬 : Z=====> A,  하 ===> 가,  9 ==> 1
+ 
+ -- 월급(salary) 칼럼을 오름차순 정렬
+ select*
+ from employee
+ order by salary asc;  -- asc는 생략 할 수 있다.
+ 
+  -- 월급(salary) 칼럼을 내림차순 정렬
+ select*
+ from employee
+ order by salary desc;
+ 
+ --이름(ename) 칼럼을 오름 차순 정렬
+ select*
+ from employee
+ order by ename;
+ 
+ -- 직책(job) 칼럼을 내림 차순 정렬
+ select*
+ from employee
+ order by job desc;
+ 
+ -- 정렬할 칼럼을 where 와 같이 사용할때 order by는 where 절 다음에 처리
+ select*
+ from employee
+ where salary>1500
+ order by salary desc;
+ --where salary>1500; //from 다음에 where가 와야된다.
+ 
+ -- ★order by에서 여러 컬럼을 정렬 할때, 앞의 컬럼을 모두 정렬하고, 같은값이 존재할때 같은 값에 대해서 뒤의 칼럼을 정렬
+  -- 답변형 게시판 만들때 사용됨....
+  
+ select dno, ename
+ from employee
+ order by dno asc, ename desc;
+ 
+ -- job : 오름 차순 정렬, dno : job 의 동일한 값에 대해서 dno를 오름차순, 
+   -- ename : dno에서 동일한 값에 대해서 ename을 오름차순 정렬
+ select job, dno, ename
+ from employee
+ order by job asc, dno asc, ename asc;
+ 
+ select job, dno, ename
+ from employee
+ order by dno desc, job asc, ename desc;
+ 
+ 
