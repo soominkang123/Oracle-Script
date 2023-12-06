@@ -79,5 +79,67 @@ WHERE 조건
 GROUP BY 그룹핑처리할컬럼명 <== 컬럼에 동일한 값을 그룹핑해서 처리함.
 HAVING 조건              <== GROUP BY 결과에 대한 조건
 ODER BY 컬럼명 ASC[DESC]  <=== 컬럼을 정렬해서 출력, ASC: 내림차순정렬, DESC: 오름차순 정렬     
-
 */
+
+--where 조건 사용하기 : 비교 연산자(NUMBER 타입의 칼럼에서 사용); = : 같다. > , < , >= , <=
+   -- 같지 않다 : <>  , != , ^=
+   -- or           -- in (값, 값, 값)
+   -- and
+   -- between
+   -- in (   )
+select*from employee;
+
+select*
+from employee
+where salary > 1500;
+
+select*
+from employee
+where salary = 1500;
+
+select*
+from employee
+where salary <> 1500;
+
+--or 연산자
+select*
+from employee
+where salary = 1500 or salary = 800 or salary = 1600;
+
+--in키워드 : in (값, 값, 값)
+select*
+from employee
+where salary in(1500,800,1600); 
+
+-- and 연산자 사용 : 부서번호가 10번인 사원의 연봉이 1500 이상인 사용자를 출력
+select*
+from employee
+where dno = 10 and salary > 1500;
+
+-- 직책이 manager 이면서 월급이 2000이상인 사원의 사원번호, 사원명, 월급을 출력
+select eno 사원번호, ename 사원명 , salary 월급, job 직책
+from employee
+where job = 'MANAGER' and salary > 2000 ;
+
+-- 비교 연산자를 date, varchar, char : 81년도 입사한 사원을 모두 출력
+select *
+from employee
+where hiredate> '81/01/01' and hiredate < '81/02/28';
+
+-- 문자열 : char, varchar, nvarchar, nchar : 문자열,''
+  --
+select*
+from employee
+where ename < 'D';
+
+-- like in : 문자열에서 특정 값만 검색 : % : 모든것이 와도 상관없다. _: 한글자가 어떤것이 와도 상관없다.
+-- 칼럼의 특정 값을 검색시 사용됨.
+select * from employee
+where ename like '%LA%';
+
+select*from employee
+where ename like '_CO%'
+
+
+
+
