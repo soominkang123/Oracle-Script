@@ -214,11 +214,55 @@ select hiredate 입사날짜, last_day(hiredate) 마지막날짜 from employee;
    
 */
 
+-- TO_CHAR : 날짜 ==> 문자
+
 select sysdate from dual; -- 23/12/07 년, 월, 일
 
--- YYYY : 년도 , MM: 월, DD : 일, HH : 시간, mm : 분, SS : 초
-select TO_CHAR (sysdate, 'YYYY-MM-DD HH:mm:SS') from dual; --2023-12-07
+-- YYYY : 년도 , MM: 월, DD : 일, HH : 시간, MI : 분, SS : 초, DAY : 요일 (월요일), DY(월, 화)
+select TO_CHAR (sysdate, 'YYYY-MM-DD HH:MI:SS') from dual; --2023-12-07
 
-select hiredate 입사날짜 , TO_CHAR (hiredate, 'YYYY-MM-DD HH:mm:SS')입사날짜2
+select hiredate 입사날짜 , TO_CHAR (hiredate, 'YYYY"년"-MI"월"-DD"일" HH:mm:SS')입사날짜2
 from employee;
+
+select TO_CHAR (sysdate, 'YYYY-MM-DD MON DAY DY HH:MI:SS') from dual;
+
+-- TO_CHAR : 숫자 ==> 문자
+/*
+   0 : 자릿수를 처리함, 자릿수가 많으면 0으로 처리됨.
+   9 : 자릿수를 처리함, 자릿수가 많으면 공백으로 처리됨.
+   L : 각 지역의 통화를 기호로 표시함.
+   
+   . : 소숫점으로 처리됨
+   , : 천단위 구분자
+*/
+
+select TO_CHAR( 9876 , 'L000,000')from dual; 
+select TO_CHAR( 9876 , 'L999,999')from dual; 
+
+-- 월급을 그 나라의 통화 기록을 붙여서 천단위로 출력
+
+select salary 월급, to_char(salary,'L999,999')"월급(한국)"
+from employee;
+
+-- TO_DATE : 문자 , 숫자 ==> 날짜 형식으로 바꿈.
+  -- 날짜 + 100일
+  -- months_between(날짜, 날짜) : 개월 수
+  
+select to_date('1998-10-10' , 'YYYY-MM-DD')from dual;
+
+-- 1981년 01월 01에서 100일 지난 시점의 날짜를 출력 , 100개월 지난 시점의 날짜 , add_month(날짜, 개월수)
+select to_date('1981/01/01' , 'YYYY/MM/DD')+100 "100일후 날짜",
+add_months(to_date('1981/01/01' , 'YYYY/MM/DD'),100) "100개월이후의 날짜"
+from dual;
+
+select to_date (770814, 'YYMMDD')from dual;
+
+-- 자신의 생일에서 현재까지 몇개월 남았는지 ? 몇일 살았는지 출력/ <== months_between (현재날짜, 생일) : 개월수
+   -- sysdate - 생일 (date)
+select months_between(sysdate, to_date('1995-07-07' , 'YYYY/MM/DD')) as "현재까지 남은 개월수",
+
+from dual
+--employee 테이블에서 2050년 12월 24일까지의 날짜를 출력
+select*
+from employee
 
