@@ -158,3 +158,67 @@ from dual;
 select MOD (3,2),     -- 나머지
       TRUNC(31/2)     -- 몫만 출력
 from dual;
+
+/*
+-- 날짜 함수 : 
+    - sysdate : 현재 시스템의  날짜를 출력 하는 함수
+    - months_between : 두 날짜 사이의 개월수를 출력
+    - add_months : 특정 날짜에서 개월수를 더 해서 출력
+    - next_day : 특정 날짜에서 다음에 초래하는 요일을 인자로 받아서 도래하는 날짜를 출력
+    - last_day : 달의 마지막 날짜를 출력
+    - round (날짜) : 날짜를 반올림 : 15일 이상 반올림, 15일 미만 : 삭제
+    - trunc(날짜) : 날짜를 잘라내는 함수
+*/
+
+select sysdate from dual;  -- 23/12/07
+
+-- 날짜에 연산이 가능  23/12/07   23/12/06   23/12/08
+select sysdate 현재날짜, sysdate-1 어제날짜, sysdate +1 내일날짜 from dual;
+
+-- 오늘에서 100일전 날짜가?  
+select sysdate - 100"100전날짜" from dual;
+-- 오늘 1000일 후의 날짜는?
+select sysdate + 1000"1000일후날짜" from dual;
+
+-- 입사일에서 오늘날까지 총근무일수를 구함. date 칼럼, (sysdate - hiredate)
+desc employee;
+
+-- 총근일수 = trunc(오늘날짜- 입사날짜)
+select ename 이름, trunc(sysdate - hiredate) 총근무일수 from employee;
+
+-- 입사일에서 1000일 시점의 날짜
+select ename 이름, hiredate 입사날짜, hiredate + 1000입사후1000일날짜 from employee;
+
+-- 특정 날짜에서 월만 출력 : TRUNC ( 날짜, 'MONTH') ,ROUND(날짜,'MONTH')
+select hiredate 원본날짜, TRUNC(hiredate,'MONTH'),ROUND(hiredate,'MONTH')from employee;
+
+-- 현재 까지의 근무 개월수를 출력 : months_between(날짜,날짜) : 두 날짜 사이의 개월수 출력
+select ename 이름, hiredate 입사날짜,trunc(months_between(sysdate,hiredate))개월수 from employee;
+
+-- 오늘 날짜에서 100개월 이후의 날짜, 100일 후의 날짜
+-- date 타입 일때 가능
+
+select sysdate 오늘날짜, add_months (sysdate,100)"100개월후", sysdate+100"100일후"from dual;
+
+-- last_day : 그 날짜의 마지막 날짜를 출력함
+select last_day(sysdate) from dual;
+
+-- 모든 사원의 입사한 날의 마지막 날짜가 무엇인지 출력
+select hiredate 입사날짜, last_day(hiredate) 마지막날짜 from employee;
+
+/*
+   ★ 형식 변환 함수
+     TO_CHAR : 날짜형, 숫자형 ===> 문자형
+     TO_DATE : 문자 ===> 날짜형식으로 변환
+     TO_NUMBER : 문자 ==> 숫자형식으로 변환
+   
+*/
+
+select sysdate from dual; -- 23/12/07 년, 월, 일
+
+-- YYYY : 년도 , MM: 월, DD : 일, HH : 시간, mm : 분, SS : 초
+select TO_CHAR (sysdate, 'YYYY-MM-DD HH:mm:SS') from dual; --2023-12-07
+
+select hiredate 입사날짜 , TO_CHAR (hiredate, 'YYYY-MM-DD HH:mm:SS')입사날짜2
+from employee;
+
