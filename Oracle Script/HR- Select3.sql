@@ -164,6 +164,108 @@ where job = 'ANALYST'
 
 select ename ,job
 from employee
-where job = (select job from employee where ename= 'ALLEN');
+where job =(select job from employee where ename= 'ALLEN');
 
 select * from employee;
+
+-- SCOTT과 ALLEN 의 직책에 해당되지 않는 사원들을 모두 출력
+-- 1. scott의 직책을 출력하는 쿼리
+-- 2. allen의 직책을 출력하는 쿼리
+-- 3. where job not in('scott의 직책','aleen직책'
+
+-- 1. scott의 직책을 출력하는 쿼리
+select job, ename from employee where ename = 'SCOTT' -- ANALYIST
+from employee
+
+-- 2. allen의 직책을 출력하는 쿼리
+select job, ename from employee where ename = 'ALLEN'-- SALESMAN
+
+-- 3. SCOTT과 ALLEN의 직책에 해당되지 않는 사원들울 모두 출력
+select ename, job
+freom employee
+where job not in('ANALYIST','SALESMAN');
+
+--- SUbQUery로 한 라인으로 출력
+select ename, job
+from employee
+where job not in(
+(select job from employee where ename= 'SCOTT'),
+(select job from employee where ename= 'ALLEN')
+);
+
+select ename, job
+from employee
+where job not in(
+select job from employee
+where ename = 'SCOTT' or ename = 'ALLEN'
+);
+
+select ename, job
+from employee
+where job not in(
+select job from employee
+where ename in('SCOTT','ALLEN')
+);
+
+select * from employee;
+-- 단일 값 :  =
+-- 여러개의 값 : in
+
+-- 'SCOTT' 보다 많은 월급을 받는 사원들 정보, 월급을 출력
+
+select ename 사원, salary 월급
+from employee
+where salary > (select salary from employee where ename = 'SCOTT');
+
+select*from employee
+order by salary desc;
+
+-- 최소 급여를 받는 사원정의 이름 담당업무 급여 출력
+select ename, job, salary
+from employee
+where salary =(select MIN(salary) from employee);
+
+-- subquery를 사용해서 출력
+--  부서별(dno) 로 최소 급여를 받는 사원정보의 이름, 직책, 월급을 출력 : hint : group by , do , dno , min , in 키워드
+select ename, job, salary
+from employee
+where (dno, salary) in (
+select dno, min(salary)
+from employee
+group by dno
+);
+------------------------------------------------
+select salary, dno, ename
+from employee
+order by dno asc, salary desc;
+
+--subquery
+select ename 이름, job 직책, salary 월급, dno 부서번호
+from employee
+where salary in (
+  -- 각 부서별 최소월급의 select 한 값을 출력
+   select min(salary)
+   from employee
+   group by dno
+   );
+-- subquery   
+-- 각 부서의 최소 급여가 30번 부서의 최소 급여보다 큰 부서를 출력 
+select ename 이름, job 직책, salary 월급, dno 부서번호
+from employee
+where dno <> 30 and salary > (
+   select min(salary)
+   from employee
+   where dno = 30
+   );
+ ------------------------------------------------
+select dno, count(*),min(salary)
+from employee
+group by dno   -- 부서번호 동일한 값을 그룹핑
+having min(salary)>(
+        -- 서브쿼리 : 30번 부서의 최소 월급
+        select min(salary) from employee
+        where dno = 30   -- 블락내에 새미콜론 넣지않기
+        
+        );
+
+        
