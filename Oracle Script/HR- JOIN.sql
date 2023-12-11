@@ -24,7 +24,15 @@
       - Foreign key 가 참조하는 칼럼은 부모테이블의 Primary Key, Unique Key 를 참조함.
       -
       
-    
+     NOT NULL
+     - 칼럼에 NULL을 넣을 수 없도록 하는 제약 조건
+     
+     CHECK 
+     - 칼럼에 조건을 넣어서 내가 원하는 값만 넣을 수 있도록 함.
+     - 월 칼럼에 1 ~ 12 까지 넣을 수 있도록 
+     
+     default : 제약 조건은 아니지만 제약 조건처럼 사용됨
+        - 칼럼에 값을 넣지 않으면 default 로 설정된 값이 등록됨.
 */
 
 select * from employee;      -- employee 테이블의 dno 칼럼은 참조한다. ( Foreign Key )
@@ -95,3 +103,91 @@ commit; -- DML (insert, update, delete ) 에서 반드시 적용
 select * from dept01;
 
 select * from emp01;
+
+-- JOIN : 여러 테이블의 칼럼을 출력 할때 JOIN을 사용해서 하나의 테이블 처럼 출력함.
+  -- 두 테이블의 공통 키 칼럼을 확인.
+  -- emp01, dept01 테이블의 공통 키 칼럼은 dno 이다.
+  -- EQUI JOIN : 오라클에서만 작동하는 JOIN 구분
+  -- ANSI JOIN : 모든 DBMS에서 공통으로 사용되는 JOIN 구분
+
+-- EQUI JOIN 구문으로 두 테이블 조인
+ -- from 절에서 JOIN 할 테이블을 명시 (,)
+ -- 테이블 이름은 별칭이름으로 둠.
+ -- where 절에서 두 테이블의 공통 키 칼럼을 명시
+ -- and 절에서 조건을 처리
+ -- 공통 키 칼럼은 출력시 반드시 테이블명.칼럼명 
+ 
+select e.eno, e.ename, e.job, d.dno, d.dname, d.loc  -- 그냥 dno 입력시 오류발생
+from emp01 e, dept01 d
+where e.dno = d.dno
+
+select eno, ename, job, d.dno, dname, loc  
+from emp01 e, dept01 d
+where e.dno = d.dno
+and d.dno = 10;  
+
+-- ANSI JOIN : 모든 DBMS에서 공통으로 사용되는 JOIN 구문
+ -- INNER JOIN : 두 테이블에서 키 칼럼에 공통되는 부분만 출력  <--- 80 %
+ -- OUTER JOIN
+       -- LEFT OUTER JOIN
+       -- RIGHT OUTER JOIN
+       -- FULL OUTER JOIN
+ -- SELF JOIN
+ -- CLOSS JOIN
+ 
+ -- ★ INNER JOIN : ANSI JOIN
+    -- from 절에 JOIN 테이블 이름을 명시
+    -- INNER 키는 생략 될 수 있다. <== 80% 이상
+    -- on 절에 두 테이블의 공통 키 칼럼을 명시. 두 테이블의 공통인 것만 출력
+    
+ 
+ -- 테이블 이름을 alias(별칭) 시키지 않는 경우   
+ select eno, ename, salary, dept01.dno, dname, loc
+ from emp01 INNER JOIN dept01 
+ on emp01.dno = dept01.dno
+ 
+ -- 테이블 이름을 alias (별칭) 사용한 경우
+ select eno, ename, salary, d.dno, dname, loc
+ from emp01 e JOIN dept01 d
+ on e.dno = d.dno
+ where e.dno = 20
+ order by ename desc;
+ 
+ -- INNER JOIN : ANSI SQL : 모든 DBMS에서 공통으로 사용되는 SQL 쿼리 ( Oracle, MySQL, MSSQL, DB2, ....)
+    -- ON 절에 두 테이블의 공통분모만 출력 
+ select*
+ from emp01 e JOIN dept01 d
+ on e.dno = d.dno
+ 
+ -- OUTER JOIN : 
+   -- LEFT OUTER JOIN : 왼쪽 테이블의 모든 내용을 출력함.
+   -- RIGHT OUTER JOIN : 오른쪽 테이블의 모든 내용을 출력함.
+   -- FULL OUTER JOIN : 왼쪽, 오른쪽 테이블의 모든 내용을 출력함.
+
+select*from dept01;
+
+insert into dept01 (dno, dname, loc)
+values (60, 'MANAGE', 'BUSAN');
+
+commit;
+
+-- 가끔 사용 함.
+--RIGHT OUTER JOIN : 두 테이블의 공통 부분과 오른쪽 (dept01)테이블의 모든 값을 출력
+select*
+from emp01 e RIGHT OUTER JOIN dept01 d    -- INNER 생략가능
+on e.dno = d.dno 
+
+-- FULL OUTER JOIN : 두 테이블(왼쪽, 오른쪽)의 모든 내용을 출력
+select*
+from emp01 e FULL OUTER JOIN dept01 d
+on e.dno = d.dno;
+
+-- SELF JOIN : 자신의 테이블을 JOIN. 자신의 테이블을 별칭이름으로 가상으로 생성해서 JOIN
+  -- 조직도 출력, 직급 상사를 바로 출력 할때 사용됨
+ 
+ select e.eno 사원번호, e.ename 사원이름, e.manager 직속상관번호, m.eno 직속상관사번, m.ename 직속상관명
+ from emp01 e JOIN emp01 m
+ on e.manager = m.eno;
+ 
+ select eno,ename , manager, eno,ename
+ from employee;
