@@ -41,7 +41,7 @@ select * from department;    -- department 테이블의 dno 칼럼을 참조한다.
 
 -- 테이블 복사 : 원본 테이블의 제약 조건은 복사 되어 오지 않는다. Alter Table 을 사용해서 제약 조건을 부여
 create table emp01
-as 
+
 select * from employee;
 
 create table dept01
@@ -189,5 +189,48 @@ on e.dno = d.dno;
  from emp01 e JOIN emp01 m
  on e.manager = m.eno;
  
+ -- SELF JOIN으로 사원 이름에 대한 직속 상관이 누구인지 출력
+ -- 직속상관이 없는 사원을 출력 : LEFT OUTER JOIN
+ select e.eno 사원번호, e.ename 사원이름, e.manager 직속상관번호, m.eno 직속상관사번, m.ename 직속상관명
+ from emp01 e LEFT OUTER JOIN emp01 m
+ on e.manager = m.eno;
+ 
+ -- 사원번호는 있지만 어떤 사원의 상관이 아닌 사원도 모두 출력 해라 :  RIGHT OUTER JOIN
+ select e.eno 사원번호, e.ename 사원이름, e.manager 직속상관번호, m.eno 직속상관사번, m.ename 직속상관명
+ from emp01 e RIGHT OUTER JOIN emp01 m
+ on e.manager = m.eno;
+ 
+ -- 직속상관이 없는것 (왼쪽), 사원번호는 가지지만 어떤사원의 직속 상관이 아닌 사원(오른쪽) : FULL OUTER JOIN
+  select e.eno 사원번호, e.ename 사원이름, e.manager 직속상관번호, m.eno 직속상관사번, m.ename 직속상관명
+ from emp01 e FULL OUTER JOIN emp01 m
+ on e.manager = m.eno;
+ 
  select eno,ename , manager, eno,ename
  from employee;
+
+-- 사원이름 'SCOTT'의 부서명(dnane), 부서위치(loc)  <== ename : 'SCOTT'은 emp01, dept01: dname,loc
+-- ANSI JOIN 
+
+select*from emp01;
+select*from dept01;
+
+--emp01, dept01 을 JOIN해서 출력
+
+select ename, dname,loc, e.dno
+from emp01 e JOIN dept01 d
+on e.dno = d.dno
+where ename = 'SCOTT';
+
+-- 2. 월급이 2000만원 이상인 사원의 이름, 월급, 부서명,부서위치, 출력 : ANSI JOIN
+select ename, salary, dname, loc, e.dno
+from emp01 e JOIN dept01 d
+on e.dno = d.dno
+where salary >= 2000
+order by dno desc;
+
+-- ANSI JOIN
+-- 3. 직책이 'MANAGER'인 사원이름(eno), 부서번호(dno), 부서명(dname), 부서위치(loc) 출력하되 사원이름 내림차순 정렬
+select job 직책, ename 사원이름, e.dno 부서번호, dname 부서명, loc 부서위치
+from emp01 e JOIN dept01 d
+on e.dno = d.dno
+where job = 'MANAGER'
