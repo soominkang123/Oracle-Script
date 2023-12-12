@@ -234,3 +234,60 @@ select job 직책, ename 사원이름, e.dno 부서번호, dname 부서명, loc 부서위치
 from emp01 e JOIN dept01 d
 on e.dno = d.dno
 where job = 'MANAGER'
+
+-- VIEW (뷰) : 가상의 테이블, 값은 가지지 않고, 코드 만 가진다
+ -- 1. 실제 테이블의 특정 칼럼만 출력 할때 <== 보안
+ -- 2. 복잡한 쿼리를 한번 만들어서 실행. <== 복잡한 JOIN 쿼리를 단순화 할 수 있다.
+
+--view 를 실습하기위한 샘플테이블 : emp02
+drop table EMP02 cascade constraints;
+
+create table EMP02
+as 
+select eno, ename, salary, commission, job, hiredate, dno
+from employee
+where salary > 1500;
+
+
+
+select * from emp02;
+
+create table dept02
+as
+select*from department;
+
+-- 기존의 원본테이블: employee, department ==> emp01, dept01
+ -- 필드명, 값, 만 복사됨
+ -- 칼럼에 부여된 제약 조건은 복사되지 않음. <== Alter Table 을 사용해서 제약 조건 추가
+ 
+ select * from user_constraints where table_name in ('EMPLOYEE','DEPARTMENT');
+ select * from user_constraints where table_name in ('EMP02','DEPT02');
+ 
+ --1. DEPT02 테이블의 dno (Primary Key)
+ --2. EMP01 테이블의 eno (Primary Key), dno(FK) ==> dept02(dno)
+ 
+alter table DEPT02 
+add constraints PK_DEPT02_DNO primary key(dno);
+
+alter table EMP02
+add constraints PK_EMP02_ENO primary key (eno);
+
+alter table EMP02
+add constraints FK_EMP02_DNO foreign key (dno) references dept02(dno);
+
+-- VIEW 생성 1. 실제 테이블의 중요 정보를 감추고 출력, 보안을 향상할 수 있다.
+   -- as 다음에 select 코드를 가지고 있음.
+   
+select*from emp02; -- 실제 테이블 : emp02
+
+-- 뷰 생성 : 실제 테이블의 값을 가지는 것이 아니라 실행 코드만 가진다.
+create view v_emp02
+as 
+select ename,job,dno
+from emp02 
+
+-- 뷰 실행:
+select 칼럼명 from 테이블명[뷰명]
+
+select*from v_emp02;
+
