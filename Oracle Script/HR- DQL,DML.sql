@@ -205,5 +205,191 @@ set manager = 7777
 where eno = 7899;
 
 delete emp04;
+
 rollback;
 commit;
+-------------------------------------------------
+/*   DDL : create(생성),alter(수정),drop(삭제)<== 테이블,뷰,함수,시퀀스,트리거,저장프로시져, 스키마를 생성, 수정, 삭제
+  
+   자료형: 데이터를 저장하는 타입
+   - 숫자: number(정수자릿수) :정수 3자리
+          number(7,2) : 소수 , 전체7자리, 소숫점이하2자리까지
+   - 문자: char(n) : 영문1자(1byte), 한글1자(3byte)
+           - 성능이 빠르다.하드 공간 낭비가 발생할 수 있다.
+           - 주민번호(13), 자릿수가 지정된 곳에 사용됨
+          varchar2(n) : 영문1자(1byte), 한글1자(3byte)
+            - 가변공간으로 적용됨, 성능은 char보다 느릴수 있다. 하드공간 낭비를 시키지 않는다.
+            - 자릿수를 알 수 없는 문자열일때 사용됨
+            nchar(n)     : nchar(10) : 한글10자
+            nvarchar2(n) : nchar(10) : 한글10자
+    - 날짜 : date : BC 4712년1월1일 ~~~9999년 12월 31일까지 저장, 년, 월, 일, 시, 분, 초 까지만 저장 가능
+             timestamp: insert(값이 들어오는 시스템의 시간): 년, 월, 일, 시, 분, 초 밀리세컨드까지 저장
+             
+     - LOB 데이터 타입 : 대량의 값을 저장, 바이너리 파일
+          CLOB: 문자를 대량으로 넣을수 있다. <==글 내용
+          BLOB: mp3,jpeg,hwp 이진 데이터 파일
+          BFILE: 대용량 파일을 저장
+             
+*/  
+
+--
+drop table test10;
+create table test10(
+   id number(4)not null primary key,  -- 중복된 값 넣을 수 없다. 정수 4자
+   n1 char(10) ,              -- 영문10자, 한글3자
+   n2 char(10) ,              -- 영문10자, 한글10자
+   n3 varchar2(10) ,          -- 영문10자, 한글3자
+   n4 nvarchar2(10)          -- 영문10자, 한글10자
+  ); 
+  
+select*from test10;  
+commit;
+rollback;
+insert into test10(id,n1,n2,n3,n4)
+values ( 1111, 'abc','가나','abc','가나');
+
+insert into test10(id,m1)
+values(1112,'가나다');
+
+/*
+JOIN : Datebase에는 많은 테이블이 존재합니다. 모델링을 통해서 테이블이 분리 되어 있다. ( R-DBMS )
+    employee 테이블과 department 테이블은 하나의 테이블인데 모델링을 (1,2,3정규화), 을 통해서 테이블을 분리
+    모델링 : 중복 제거, 성능향상, 
+    
+    제약 조건 : 테이블의 칼럼에 들어가는 키 , 데이터의 무결성 ( 결함없는데이터, 원하는 값만 )
+      Primary Key : 
+        - 테이블의 칼럼에 1번만 넣을 수 있다.
+        - 2개 칼럼을 묶어서  Primary Key 를 넣을 수 있다.
+        - 테이블을 생성할때 반드시 PK 이 존재해야 한다. - Update, Delete 구분해서 PK 칼럼을 where 조건으로 사용함.
+        - 특정 칼럼에 중복 된 값을 넣지 못하도록 함.
+        - 반드시 not null 컬럼이어야함. null을 넣을 수 없다.
+        - index 가 자동으로 생성 된다. 칼럼의 검색을 빠르게 한다.
+        - JOIN 시 ON 에서 많이 사용하는 키 칼럼.
+        
+      Unique Key :  
+       - 칼럼에 중복된 값을 넣지 못하도록 함.
+       - null을 넣을 수 있다. 단 1번만 넣을 수 있다. not null, null
+       - 하나의 테이블에 여러번 Unique Key를 넣을 수 있다.
+       - index 가 자동으로 생성됨, JOIN 시 ON 에 사용됨
+       
+      Foreign Key :  
+      - 다른 테이블(부모 테이블) 의 특정 칼럼을 참조해서 값을 넣도록 함.
+      - Foreign key 가 참조하는 칼럼은 부모테이블의 Primary Key, Unique Key 를 참조함.
+      -
+      
+     NOT NULL
+     - 칼럼에 NULL을 넣을 수 없도록 하는 제약 조건
+     
+     CHECK 
+     - 칼럼에 조건을 넣어서 내가 원하는 값만 넣을 수 있도록 함.
+     - 월 칼럼에 1 ~ 12 까지 넣을 수 있도록 
+     
+     default : 제약 조건은 아니지만 제약 조건처럼 사용됨
+        - 칼럼에 값을 넣지 않으면 default 로 설정된 값이 등록됨.
+     
+     제약 조건을 출력하는 데이터 사전: user_constraints
+       select*from user_constraints where table_name in ('테이블명');
+       
+*/
+
+-- 제약 조건 이름을 넣지 않고 테이블 생성 한 경우 : Oracle에서 제약조건이름을 랜덤하게 생성한다.
+-- insert시 오류가 발생할 경우 제약조건 이름으로 오류난 칼럼을 찾기 힘들다. Primary Key : 
+create table member1(
+  id varchar2(50) not null primary key,   -- 제약 조건 이름을 생략하면 Oracle에서 자동으로 지정함.
+  pass varchar2(50) not null,
+  addr varchar2(100) null,
+  jumin char(13) null,      -- 자릿수가 지정된 칼럼
+  phone varchar2(50),
+  age number(3),            -- 정수 3자리
+  weight number(5,2)        -- 실수 전체 5자리, 소숫점이하2자리
+  );     
+desc member1;  
+select*from member1;  
+commit;
+insert into member1( id, pass, addr, jumin, phone, age, weight)
+values('abc','1234','서울','123456-789101','010-1111-1111',30,77.77);  --같은 값 재입력시 제약조건 위배
+
+select*from user_constraints where table_name in ('MEMBER1');
+
+-- 테이블 생성시 제약 조건 이름 부여
+create table member2(
+  id varchar2(50) not null constraint PK_MEMBER2_ID primary key,   -- 제약 조건 이름을 생략하면 Oracle에서 자동으로 지정함.
+  pass varchar2(50) constraint NN_MEMBER2_PASS not null,
+  addr varchar2(100) null,
+  jumin char(13) null,      -- 자릿수가 지정된 칼럼
+  phone varchar2(50),
+  age number(3),            -- 정수 3자리
+  weight number(5,2)        -- 실수 전체 5자리, 소숫점이하2자리
+  );    
+select*from user_constraints where table_name in ('MEMBER2');  -- 
+
+insert into member2( id, addr, jumin, phone, age, weight)
+values('abc','서울','123456-789101','010-1111-1111',30,77.77);
+commit;
+----------------------------------------------
+
+/* UNIQUE: 중복된 값을 넣을 수 없다. null을 넣을 수 있다. 테이블에 여러번 넣을 수 있다.
+ 
+*/
+create table member3(
+  id varchar2(50) not null constraint PK_MEMBER3_ID primary key,   -- 제약 조건 이름을 생략하면 Oracle에서 자동으로 지정함.
+  pass varchar2(50) constraint NN_MEMBER3_PASS not null,
+  addr varchar2(100) null,
+  jumin char(13) null constraint U_MEMBER3_JUMIN unique,      -- 중복되면 안됨
+  phone varchar2(50)not null constraint U_MEMBER3_PHONE unique, -- 중복되면 안됨
+  age number(3),            -- 정수 3자리
+  weight number(5,2)        -- 실수 전체 5자리, 소숫점이하2자리
+  );
+insert into member3( id, pass, addr, jumin, phone, age, weight)
+values('abc','1234','서울','123456-789101','010-1111-1111',30,77.77);
+commit;  
+select*from member3  
+
+
+---------------------------------------------------------------
+
+--CHECK 제약 조건 : 칼럼에 조건에 맞는 값만 넣을 수 있도록 함.
+drop table member4;
+
+create table member4(
+  id varchar2(50) not null constraint PK_MEMBER4_ID primary key,   -- 제약 조건 이름을 생략하면 Oracle에서 자동으로 지정함.
+  pass varchar2(50) constraint NN_MEMBER4_PASS not null,
+  addr varchar2(100) null constraint CK_MEMBER4_ADDR check (addr in('서울', '부산', '대구')),
+  jumin char(13) null constraint U_MEMBER4_JUMIN unique,      -- 중복되면 안됨
+  phone varchar2(50)not null constraint U_MEMBER4_PHONE unique, -- 중복되면 안됨
+  age number(3) constraint CK_MEMBER4_AGE check(age>0 and age<200),            -- 정수 3자리
+  gender char(1)constraint CK_MEMBER4_GENDER check(gender in('w','m')),
+  weight number(5,2),        -- 실수 전체 5자리, 소숫점이하2자리
+  hiredate date default sysdate,
+  addr2 char(10) default '서울',
+  age2 number default 0     -- 마지막엔 ,제외
+  );
+  
+insert into member4( id, pass, addr, jumin, phone, age, weight,gender)
+values('abc','1234','대구','123456-789101','010-1111-1111',100,77.77,'w'); -- 조건에 맞는 값만들어감 서울 부산 대구
+commit;  
+--------------------------------------------------------------
+
+-- default : 제약조건이 아니다. 제약조건 이름을 부여 할 수 없다.
+  -- 값을 넣을때 값이 들어가고 값을 넣지 않을때 default로 설정된 값이 들어간다.
+
+create table member5(
+  id varchar2(50) not null constraint PK_MEMBER5_ID primary key,   -- 제약 조건 이름을 생략하면 Oracle에서 자동으로 지정함.
+  pass varchar2(50) constraint NN_MEMBER5_PASS not null,
+  addr varchar2(100) null constraint CK_MEMBER5_ADDR check (addr in('서울', '부산', '대구')),
+  jumin char(13) null constraint U_MEMBER5_JUMIN unique,      -- 중복되면 안됨
+  phone varchar2(50)not null constraint U_MEMBER5_PHONE unique, -- 중복되면 안됨
+  age number(3) constraint CK_MEMBER5_AGE check(age>0 and age<200),            -- 정수 3자리
+  gender char(1)constraint CK_MEMBER5_GENDER check(gender in('w','m')),
+  weight number(5,2),        -- 실수 전체 5자리, 소숫점이하2자리
+  addr2 char(10) default '서울',
+  age2 number default 0     -- 마지막엔 ,제외
+  );
+select *from member5;  
+  
+insert into member5( id, pass, addr, jumin, phone, age, weight,gender)
+values('abc','1234','대구','123456-789101','010-1111-1111',100,77.77,'w'); 
+
+insert into member5( id, pass, addr, jumin, phone, age, weight,gender,hiredate,addr2,age2)
+values('abcd','1234','대구','123456-789103','010-1111-1113',100,77.77,'w','22/11/11','광주',30); 
+commit;  
