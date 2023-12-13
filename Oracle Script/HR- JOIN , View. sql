@@ -291,3 +291,115 @@ select 칼럼명 from 테이블명[뷰명]
 
 select*from v_emp02;
 
+-- 데이터 사전 : user_테이블  <== 시스템의 정보를 저장 되어있는 테이블
+
+select*from user_views;
+
+-- 2. 사용의 편의성 , 복잡한 구문을 view를 생성해서 저장시켜 두고 실행, <== JOIN
+
+-- 두 테이블을 조인해서 월급이 2500이상인 사원정보를 출력
+create view v_join
+as
+select ename, job, salary, dname, loc
+from emp02 e
+ join dept02 d
+  on e.dno = d.dno
+where salary >= 2500;
+
+select*from v_join;
+
+-- employee, department 테이블의 부서별로 최소 월급을 받는 사원이름, 사원의 직책, 부서명, 부서위치 를 출력되 최소월급이 900 이상
+  -- 사원 정보를 출력, 부서번호 20번은 제외하고
+  -- view 안에 쿼리를 저장하고 뷰를 실행해서 출력   <== JOIN,group by, where, having)
+
+-- 부서별로 최소 월급을 받는 사원 정보를 출력하는 view, 20부서는 제외됨  
+create view v_join2
+as
+select ename 사원이름,job 직책,dname 부서명,loc 부서위치, d.dno 부서번호
+ from employee e
+  join department d
+    on e.dno = d.dno
+where salary in(
+    -- 부서별로 최소월급
+     select min(salary)from employee
+     where dno <> 20
+     group by dno
+     having min(salary) > 900
+ )
+ 
+ -- 뷰 실행
+ select * from v_join2;
+ 
+ -- view에 정렬 칼럼까지 적용됨
+ create view v_join3
+as
+select ename 사원이름,job 직책,dname 부서명,loc 부서위치, d.dno 부서번호
+ from employee e
+  join department d
+    on e.dno = d.dno
+where salary in(
+    -- 부서별로 최소월급
+     select min(salary)from employee
+     where dno <> 20
+     group by dno
+     having min(salary) > 900
+ )
+ order by ename desc 
+ 
+ select*from v_join3;
+ 
+ -- view에 as 블락에 select문이 옴
+   -- 실제 값을 가지고 있지 않음. select 코드만 들어 있음.
+   -- 실제 테이블의 컬럼에 잘 매칭 될 경우
+   -- insert, update, delete를 view 통해서 할 수 있다. 단 실제 테이블에 각 컬럼의 제약 조건에 맞을때 가능
+   
+select*from emp02;
+
+-- view 생성
+drop view v_test01;
+
+create view v_test01
+as
+select eno, ename, dno
+from emp02;
+
+-- view 실행
+select*from v_test01;
+
+--view에 값을 넣을 수 있다. ==> 실제 테이블에 값이 들어감.
+insert into v_test01(eno,ename,dno)
+values(8080,'HONG',30);
+
+commit;
+
+-- view 를 사용해서 값을 수정: update <== where 조건을 반드시 사용해야하고 칼럼명은 Primary Key 가 들어간 칼럼
+update v_test01
+set ename = 'KIM'
+where eno = 8080;
+
+commit;
+
+-- view 를 사용해서 값을 삭제 : delete <== where 조건을 반드시 사용해야하고 칼럼명은 Primary Key 가 들어간 칼럼
+
+delete v_test01 
+where eno = 8080;
+
+commit;
+
+select*from emp02
+-- v_test2: insert(안됨), update(가능),delete(가능) ==> 실제 테이블의 제약 조건에 잘 맞아야 한다.
+create view v_test02
+as
+select eno,ename,salary 
+from emp02;
+
+insert into v_test02 (eno,ename,salary)
+values(9090,'SIM',3500);
+
+-- 테이블의 특정 칼럼에 not null 제약 조건 추가
+alter table emp02 
+modify dno NOT NULL;
+
+delete v_test02
+where eno = 9090;
+commit;
