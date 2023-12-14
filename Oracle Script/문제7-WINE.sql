@@ -7,8 +7,8 @@ create table sale30(
      sale_amount varchar2(6) default 0,
      sale_price varchar2(6) default 0,
      sale_tot_price varchar2(15) default 0
-);
- 
+); 
+
 create table member30(
       mem_id varchar2(6)
       not null constraint PK_MEMBER30_MEM_ID primary key,
