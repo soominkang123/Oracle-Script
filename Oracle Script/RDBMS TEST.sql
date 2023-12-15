@@ -20,7 +20,8 @@ select ename as "사원이름",job as "담당업무",salary as "급여"
 from employee
 where job in ('CLERK', 'SALESMAN')and salary not in (1600,950,1300);
 
---4. 자신이 태어난 날짜에서 현재까지 몇 개월이 지났는지 출력 하세요. 소숫점은 잘라서 출력 하세요 . (months_between , trunc 함수 사용)
+--4. 자신이 태어난 날짜에서 현재까지 몇 개월이 지났는지 출력 하세요. 소숫점은 잘라서 출력 하세요.
+--(months_between , trunc 함수 사용)
 select trunc(months_between(sysdate, to_date('1995/07/07', 'YYYY/MM/DD'))) 개월수,
 trunc(sysdate - to_date('1995/07/07', 'YYYY/MM/DD')) 일수
 from dual;
@@ -33,7 +34,8 @@ where salary > 2000
 group by dno
 having round(avg(salary),2)>=2000;
 
---6. 급여가 평균 급여보다 많은 사원들의 사원번호(eno)와 이름(ename)을 표시하되 결과를 급여(salary) 에 대해 오름차순 정렬하시오.  subquery를 사용해서 출력 하세요.
+--6. 급여가 평균 급여보다 많은 사원들의 사원번호(eno)와 이름(ename)을 표시하되 결과를 급여(salary) 에 대해 오름차순 
+--정렬하시오.  subquery를 사용해서 출력 하세요.
 select ename 사원이름,dno 사원번호,salary 급여,job 직책
 from employee
 where salary>(
@@ -53,7 +55,8 @@ order by ename desc;
 8. 다음은 복잡한 쿼리를 view 를 생성해서 단순화하고 view를 실행하시오 . 
 뷰(view) 명 :  v_join 
 
-employee, department 테이블의 부서별로 최소 월급을 받는 사원이름(ename), 사원의 직책 (job), 부서명(dname), 부서위치 (loc) 를 출력되 최소월급이 900이상 만 출력하세요. 단, 부서번호 20번은 제외하고 출력하세요. 
+employee, department 테이블의 부서별로 최소 월급을 받는 사원이름(ename), 사원의 직책 (job),
+부서명(dname), 부서위치 (loc) 를 출력되 최소월급이 900이상 만 출력하세요. 단, 부서번호 20번은 제외하고 출력하세요. 
     힌트 :  JOIN, group by, where, having , subquery  구문을 활용 하세요
    
    - 답안 :  view 생성 구문, view 실행 구문 을 넣으세요. 

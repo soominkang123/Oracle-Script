@@ -79,3 +79,4 @@ create table wine_type30(
     wine_type_code varchar2(6) not null constraint PK_WINE_TYPE30_WINE_TYPE_CODE primary key,
     wine_type_name varchar2(50)
 );
+
