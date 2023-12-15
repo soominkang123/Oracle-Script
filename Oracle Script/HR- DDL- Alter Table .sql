@@ -138,7 +138,122 @@ drop constraint SYS_C008492;
 
   select eno, ename, salary, e.dno, d.dno, dname, loc
   from emp60 e
-   join dept60 d
-    on e.dno = d.dno;
+  join dept60 d
+  on e.dno = d.dno;
     
-    
+-- 6-3. Unique 제약 조건 추가 : 중복된 값을 넣지 못하도록 설정
+  -- 한 테이블 여러 컬럼에 부여 할 수 있다.
+  -- not null, null 모두 Unique,   주민번호, Email
+  -- null을 여러번 넣을 수 있다.
+  -- 
+  
+ select*from user_constraints where table_name in('DEPT60','EMP60');   
+ desc dept60;
+ desc emp60;
+ 
+ select*from dept60;
+ 
+ alter table dept60
+ add constraint U_DEPT60_EMAIL unique(email);
+ 
+ insert into dept60
+ values(60,'영업부','부산',sysdate,yyy@yyy.com,'부산')
+
+ commit;
+ 
+ alter table dept60
+ add constraint U_DEPT60_ADDERSS1 unique (address1);
+ 
+ update dept60
+ set address1 = '광주'
+ where dno = 60;
+ 
+ -- 제약 조건 제거
+ alter table dept60
+ drop constraint U_DEPT60_ADDRESS1
+ 
+-- 6-4 check 제약 조건 추가: 컬럼에 조건을 부여해서 조건에 맞는 값만 입력 
+select*from emp60;
+
+select*from user_constraints where table_name in('DEPT60','EMP60');   
+
+alter table emp60 
+add (addr varchar2(50), hdate date); 
+
+alter table emp60
+add age number(3) ;
+
+
+-- addr 컬럼은 : '서울','부산','광주'만 넣을 수 있도록 조건
+-- hdate 컬럼은 : 2023년 01월 01 ~ 2023년 12월 31일까지만 넣도록 조건
+-- age 컬럼은 0살 ~ 300살 의 정수만 조건
+
+alter table emp60
+add constraint CK_EMP60_ADDR check(addr in ('서울','부산','광주'));
+
+insert into emp60(eno, dno, addr)
+values(8080,20,'광주')
+commit;
+
+alter table emp60;
+add constraint CK_EMP60_HDATE
+ check(hdate between to_date('20230101','YYYYMMDD')and to_date('20231231','YYYYMMDD'));
+  
+insert into emp60(eno, dno, addr,hdate)
+values(8181,20,'서울', '23/01/01')
+commit;
+
+alter table emp60
+add constraint CK_EMP60_AGE check(age >= 0 and age <= 300);
+
+insert into emp60(eno, dno, addr,hdate,age)
+values(8282,20,'서울', '23/01/01',88);
+commit;
+
+-- 6-5. NOT NULL 제약조건 : 컬럼에 NULL없도록 설정, 반드시 값이 입력이 되어야 한다.
+         -- 컬럼의 값이 NULL이 있으면 오류 발생
+desc dept60;
+select*from dept60;
+
+alter table dept60
+modify address1 constraint NN_DEPT60_ADDRESS1 NOT NULL;
+
+update dept60
+set address1 = '서울'
+where address1 is null;
+
+select*from user_constraints where table_name in('DEPT60','EMP60');   
+
+insert into dept60
+values (70,'관리부','부산',sysdate,'ccc@ccc.com','대구');
+
+--6-6 default : 제약 조건이 아니다. 제약조건이름을 부여 할 수가 없다.
+     -- 컬럼의 값을 넣지 않을 경우 default로 설정된 값이 자동으로 들어감.
+     -- default에 설정을 제거하기 위해서는 default null
+     
+  select*from dept60;   
+  
+  alter table dept60
+  add address2 varchar2(100);
+  
+  alter table dept60
+  modify address2 default '서울';
+  
+  insert into dept60
+  values (80,'관리부','부산',sysdate,'ddd@ccc.com','대구',default);
+  commit;
+  
+  insert into dept60(dno,address1)
+  values(90,'강릉');
+  commit;
+  
+-- default 제약 조건 제거 : default null
+alter table dept60
+modify address2 default null;
+
+-- 제약 조건 제거 : Primary Key, Foreign Key, Unique, NOT NULL, check
+  -- alter table 테이블명 drop 제약조건이름
+  
+-- 제약 조건 제거 : default
+ -- alter table 테이블명 modify 컬럼명 default null
+ 
