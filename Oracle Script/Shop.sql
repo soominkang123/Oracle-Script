@@ -1,3 +1,8 @@
+drop table "members" cascade constraints ; 
+drop table "order" cascade constraints ; 
+drop table "products" cascade constraints ; 
+drop table "address" cascade constraints ; 
+
 CREATE TABLE "members" (
 	"memberID"	number(4)		NOT NULL,
 	"zipcode"	number(4)		NOT NULL,
@@ -33,8 +38,8 @@ CREATE TABLE "order" (
 );
 
 ALTER TABLE "members" ADD CONSTRAINT "PK_MEMBERS" PRIMARY KEY (
-	"memberID",
-	"zipcode"
+	"memberID"
+	
 );
 
 ALTER TABLE "address" ADD CONSTRAINT "PK_ADDRESS" PRIMARY KEY (
@@ -46,9 +51,8 @@ ALTER TABLE "products" ADD CONSTRAINT "PK_PRODUCTS" PRIMARY KEY (
 );
 
 ALTER TABLE "order" ADD CONSTRAINT "PK_ORDER" PRIMARY KEY (
-	"orderID",
-	"memberID",
-	"productID"
+	"orderID"
+	
 );
 
 ALTER TABLE "members" ADD CONSTRAINT "FK_address_TO_members_1" FOREIGN KEY (
