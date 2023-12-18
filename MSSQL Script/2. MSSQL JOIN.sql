@@ -147,11 +147,57 @@ select * from orders;
 
 
 -- 1. INNER JOIN : ANSI 호환으로 JOIN
---  주문자의 이름, 전화번호, 주소, 제품명, 제품가격, 구매날짜, 구패제품 갯수를 출력
-select * from members 
+--  주문자의 이름, 전화번호, 주소, 제품명, 제품가격, 구매날짜, 구매제품 갯수, 제품명 을 출력
+
+-- 구매한 사용자 정보 및 구매 제품만 출력됨
+select orderID, m.memberID, p.productID, LastName, FirstName, phoneNumber, city, addressLine1, orderdate, quantity, productName
+from orders o
+join members m
+ on o.MemberID = m.MemberID
+join Addresses a
+ on m.MemberID = a.MemberID
+join products p
+ on o.ProductID = p.ProductID
+
+select * from orders;
+select * from members;
 
 -- 2. OUTER JOIN
-    -- 주문 하지 않는 사용자 정보를 출력
-	-- 주문 되지 않는 제품 정보를 출력 
+    -- 주문 하지 않는 사용자 정보를 출력 : orders 테이블에서 주문되지 않는 사용자 정보 
+select *
+from orders o
+   right outer join members m
+    on o.MemberID = m.MemberID
+	where orderID is null;
 
+select LastName,FirstName
+from orders o
+   right outer join members m
+    on o.MemberID = m.MemberID
+	where orderID is null;
+	-- 주문 되지 않는 제품 정보를 출력 
+select * from orders;
+
+select*
+ from orders o
+   right outer join products p
+    on o.ProductID = p.ProductID
+Where orderID is null;
+
+select ProductName
+ from orders o
+   right outer join products p
+    on o.ProductID = p.ProductID
+Where orderID is null;
+
+
+-- 주문 되지 않는 제품 정보 출력
+select FirstName
+  from members m
+       left outer join Orders o
+	      on m.MemberID = o.MemberID
+where orderID is null;
+
+select*from orders;
+select*from members;
 
