@@ -200,4 +200,4 @@ where orderID is null;
 
 select*from orders;
 select*from members;
-
+select * from Products;
