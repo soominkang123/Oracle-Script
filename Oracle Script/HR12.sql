@@ -45,5 +45,7 @@ create table board (
   select * from users; 
 
   drop table users; 
+  
+  desc board;
 
 
